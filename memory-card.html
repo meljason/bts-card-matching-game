@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <title>BT21 Memory Card</title>
+  </head>
+  <body>
+    <header class="pt-2 pb-3 mb-3 inner-header">
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h1 class="mt-0 mb-3 text-white">BTS Memory Game</h1>
+        </div>
+      </div>
+    </header>
+    <div id="app">
+      <div class="row">
+        <div class="col-xl-6 mx-auto">
+          <div class="row justify-content-md-center">
+            <div
+              v-for="card in memoryCards"
+              class="col-auto mr-2 mb-3 flip-container"
+              :class="{ 'flipped': card.isFlipped, 'matched' : card.isMatched  }"
+              @click="flipCard(card)"
+            >
+              <div class="memorycard">
+                <div class="decu border rounded shadow">
+                  <img
+                    width="130"
+                    height="200"
+                    src="/assets/images/memorycard/back.jpg"
+                  />
+                </div>
+                <div class="endessou rounded border">
+                  <img
+                    width="163"
+                    height="200"
+                    :src="'/assets/images/memorycard/'+card.img"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="mx-auto">
+          <button class="btn" onClick="window.location.reload();">
+            Restart Game
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      //fetch the audio from the asset 
+      var audioDuring = new Audio("assets/bts-during.mp3");
+      audioDuring.play();
+
+      let app = new Vue({
+        el: "#app",
+        data: {
+          finish: false,
+          flippedCards: [],
+          memoryCards: [],
+          cards: [
+            {
+              name: "Chimmy",
+              img: "chimmy.jpg",
+            },
+            {
+              name: "Cooky",
+              img: "cooky.jpg",
+            },
+            {
+              name: "Koya",
+              img: "koya.jpg",
+            },
+            {
+              name: "Mang",
+              img: "mang.jpg",
+            },
+            {
+              name: "Rj",
+              img: "rj.jpg",
+            },
+            {
+              name: "Shooky",
+              img: "shooky.jpg",
+            },
+            {
+              name: "Tata",
+              img: "tata.jpg",
+            },
+            {
+              name: "Van",
+              img: "van.jpg",
+            },
+          ],
+        },
+        created() {
+          this.cards.forEach((card) => {
+            Vue.set(card, "isFlipped", false);
+            Vue.set(card, "isMatched", false);
+          });
+
+          this.memoryCards = _.shuffle(
+            this.memoryCards.concat(
+              _.cloneDeep(this.cards),
+              _.cloneDeep(this.cards)
+            )
+          );
+
+          this.reset();
+        },
+
+        methods: {
+          flipCard(card) {
+            //to check if the name of the card is matching and mark the isMatch property to true
+            //if its not matched, we set the property to false
+            if (
+              card.isMatched ||
+              card.isFlipped ||
+              this.flippedCards.length === 2
+            )
+              return;
+
+            card.isFlipped = true;
+
+            if (this.flippedCards.length < 2) this.flippedCards.push(card);
+            if (this.flippedCards.length === 2) this._match(card);
+          },
+
+          _match(card) {
+            if (this.flippedCards[0].name === this.flippedCards[1].name) {
+              setTimeout(() => {
+                this.flippedCards.forEach((card) => (card.isMatched = true));
+                this.flippedCards = [];
+
+                if (this.memoryCards.every((card) => card.isMatched === true)) {
+                  this.finish = true;
+
+                  //paude dom audio and plaay winning audio
+                  audioDuring.pause();
+                  audioDuring.currentTime = 0;
+                  var audio = new Audio("assets/bts-win.mp3");
+                  audio.play();
+                }
+              }, 400);
+            } else {
+              setTimeout(() => {
+                this.flippedCards.forEach((card) => {
+                  card.isFlipped = false;
+                });
+                this.flippedCards = [];
+              }, 800);
+            }
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
