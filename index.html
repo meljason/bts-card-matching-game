@@ -32,18 +32,10 @@
             >
               <div class="memorycard">
                 <div class="decu border rounded shadow">
-                  <img
-                    width="130"
-                    height="200"
-                    src="./img/back.jpg"
-                  />
+                  <img width="130" height="200" src="./img/back.jpg" />
                 </div>
                 <div class="endessou rounded border">
-                  <img
-                    width="163"
-                    height="200"
-                    :src="'./img/'+card.img"
-                  />
+                  <img width="163" height="200" :src="'./img/'+card.img" />
                 </div>
               </div>
             </div>
@@ -77,7 +69,7 @@
       crossorigin="anonymous"
     ></script>
     <script>
-      //fetch the audio from the asset 
+      //fetch the audio from the asset
       var audioDuring = new Audio("assets/bts-during.mp3");
       audioDuring.play();
 
@@ -164,7 +156,7 @@
                 if (this.memoryCards.every((card) => card.isMatched === true)) {
                   this.finish = true;
 
-                  //paude dom audio and plaay winning audio
+                  //paude dom audio and play winning audio
                   audioDuring.pause();
                   audioDuring.currentTime = 0;
                   var audio = new Audio("assets/bts-win.mp3");
@@ -185,3 +177,20 @@
     </script>
   </body>
 </html>
+
+<!-- 
+Citations:
+
+Author: Daan 
+Date posted: Feb 13 2020
+https://medium.com/better-programming/create-the-match-match-memory-game-in-react-and-vue-js-1026f1df000e
+
+Author: leftstick
+Date Posted: 9 months ago
+https://github.com/leftstick/vue-memory-game
+
+Author: Tusharr Gugnani
+Date Posted: 24 June 2020
+https://www.freecodecamp.org/news/how-to-build-a-memory-card-game-with-vuejs/
+
+ -->
