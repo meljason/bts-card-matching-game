@@ -24,6 +24,7 @@
       <div class="row">
         <div class="col-xl-6 mx-auto">
           <div class="row justify-content-md-center">
+            <!-- binding the click event -->
             <div
               v-for="card in memoryCards"
               class="col-auto mr-2 mb-3 flip-container"
@@ -76,9 +77,9 @@
       let app = new Vue({
         el: "#app",
         data: {
-          finish: false,
-          flippedCards: [],
-          memoryCards: [],
+          finish: false, //initialise a finish to false and change it to true when the game is done
+          flippedCards: [], //store cards that has already been flipped
+          memoryCards: [], //to store the card that will be played
           cards: [
             {
               name: "Chimmy",
@@ -114,6 +115,7 @@
             },
           ],
         },
+        //ths is a created life cycle event 
         created() {
           this.cards.forEach((card) => {
             Vue.set(card, "isFlipped", false);
@@ -122,15 +124,15 @@
 
           this.memoryCards = _.shuffle(
             this.memoryCards.concat(
+              //using deep copy in order to double/copy the objects and then shuffle them using shuffle function from Lodash
               _.cloneDeep(this.cards),
               _.cloneDeep(this.cards)
             )
           );
-
-          this.reset();
         },
 
         methods: {
+          //method to flip the card
           flipCard(card) {
             //to check if the name of the card is matching and mark the isMatch property to true
             //if its not matched, we set the property to false
@@ -143,6 +145,7 @@
 
             card.isFlipped = true;
 
+            //this is to check if the card already matched, already flipped and then prevent the user to flip them again
             if (this.flippedCards.length < 2) this.flippedCards.push(card);
             if (this.flippedCards.length === 2) this._match(card);
           },
@@ -150,9 +153,11 @@
           _match(card) {
             if (this.flippedCards[0].name === this.flippedCards[1].name) {
               setTimeout(() => {
+                //add to the array of flippedCards when the cards are matched
                 this.flippedCards.forEach((card) => (card.isMatched = true));
                 this.flippedCards = [];
 
+                //check if all the cards are matched
                 if (this.memoryCards.every((card) => card.isMatched === true)) {
                   this.finish = true;
 
@@ -162,14 +167,14 @@
                   var audio = new Audio("assets/bts-win.mp3");
                   audio.play();
                 }
-              }, 400);
+              }, 400); //set a little delay of 400 milliseconds before marking them as matched
             } else {
               setTimeout(() => {
                 this.flippedCards.forEach((card) => {
                   card.isFlipped = false;
                 });
                 this.flippedCards = [];
-              }, 800);
+              }, 800); //800 miliseconds delay to flip them back if they dont match
             }
           },
         },
