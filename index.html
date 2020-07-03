@@ -77,7 +77,6 @@
       let app = new Vue({
         el: "#app",
         data: {
-          finish: false, //initialise a finish to false and change it to true when the game is done
           flippedCards: [], //store cards that has already been flipped
           memoryCards: [], //to store the card that will be played
           cards: [
@@ -115,10 +114,9 @@
             },
           ],
         },
-        //ths is a created life cycle event 
         created() {
           this.cards.forEach((card) => {
-            Vue.set(card, "isFlipped", false);
+            Vue.set(card, "isFlipped", false); 
             Vue.set(card, "isMatched", false);
           });
 
@@ -159,7 +157,6 @@
 
                 //check if all the cards are matched
                 if (this.memoryCards.every((card) => card.isMatched === true)) {
-                  this.finish = true;
 
                   //paude dom audio and play winning audio
                   audioDuring.pause();
